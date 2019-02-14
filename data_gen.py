@@ -111,54 +111,51 @@ for day in range(365):
         total_items_bought += items_to_purchase
 
         # 70% chance of buying milk
-        if random.randint(1, 100) <= 70:
+        if items_purchased < items_to_purchase and random.randint(1, 100) <= 70:
             write_record(current_date, customer, get_random_product('Milk'))
             items_purchased += 1
 
             # 50% chance of buying cereal
-            if random.randint(1, 100) <= 50:
+            if items_purchased < items_to_purchase and random.randint(1, 100) <= 50:
                 write_record(current_date, customer, get_random_product('Cereal'))
                 items_purchased += 1
-        else:
+        elif items_purchased < items_to_purchase and random.randint(1, 100) <= 5:
             # 5% chance of buying cereal
-            if random.randint(1, 100) <= 5:
-                write_record(current_date, customer, get_random_product('Cereal'))
-                items_purchased += 1
+            write_record(current_date, customer, get_random_product('Cereal'))
+            items_purchased += 1
         
         # 20% chance of buying baby food
-        if random.randint(1, 100) <= 20:
+        if items_purchased < items_to_purchase and random.randint(1, 100) <= 20:
             write_record(current_date, customer, get_random_product('Baby Food'))
             items_purchased += 1
 
             # 80% chance of buying diapers
-            if random.randint(1, 100) <= 80:
+            if items_purchased < items_to_purchase and random.randint(1, 100) <= 80:
                 write_record(current_date, customer, get_random_product('Diapers'))
                 items_purchased += 1
-        else:
+        elif items_purchased < items_to_purchase and random.randint(1, 100) == 1:
             # 1% chance of buying diapers
-            if random.randint(1, 100) == 1:
-                write_record(current_date, customer, get_random_product('Diapers'))
-                items_purchased += 1
+            write_record(current_date, customer, get_random_product('Diapers'))
+            items_purchased += 1
         
         # 50% chance of buying bread
-        if random.randint(1, 100) <= 50:
+        if items_purchased < items_to_purchase and random.randint(1, 100) <= 50:
             write_record(current_date, customer, get_random_product('Bread'))
             items_purchased += 1
         
         # 10% chance of buying peanut butter
-        if random.randint(1, 100) <= 10:
+        if items_purchased < items_to_purchase and random.randint(1, 100) <= 10:
             write_record(current_date, customer, get_random_product('Peanut Butter'))
             items_purchased += 1
 
             # 90% change of buying jam or jelly
-            if random.randint(1, 100) <= 90:
+            if items_purchased < items_to_purchase and random.randint(1, 100) <= 90:
                 write_record(current_date, customer, get_random_product('Jelly/Jam'))
                 items_purchased += 1
-        else:
             # 5% change of buying jam or jelly
-            if random.randint(1, 100) <= 5:
-                write_record(current_date, customer, get_random_product('Jelly/Jam'))
-                items_purchased += 1
+        elif items_purchased < items_to_purchase and random.randint(1, 100) <= 5:
+            write_record(current_date, customer, get_random_product('Jelly/Jam'))
+            items_purchased += 1
 
         # Random items for the rest
         for i in range(items_purchased + 1, items_to_purchase):
