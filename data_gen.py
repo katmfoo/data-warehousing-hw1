@@ -4,6 +4,7 @@
 import datetime
 import random
 import operator
+import math
 
 # Constants
 DAILY_CUSTOMERS_LOW = 1140
@@ -39,13 +40,43 @@ products = {}
 # Create products dictionary
 for product in products_file:
     product = product.rstrip().split('|')
+
+    non_special_item_average_purchased = 27.352
+
+    if product[3] == 'Milk':
+        non_special_item_average_purchased *= 1.5
+    else:
+        non_special_item_average_purchased *= 3
+    
+    non_special_item_average_purchased = math.ceil(non_special_item_average_purchased)
+
+    minimum_inventory = non_special_item_average_purchased
+
+    if product[3] == 'Milk':
+        minimum_inventory += 137
+    elif product[3] == 'Cereal':
+        minimum_inventory += 4.609
+    elif product[3] == 'Baby Food':
+        minimum_inventory += 1.486
+    elif product[3] == 'Diapers':
+        minimum_inventory += 2.406
+    elif product[3] == 'Bread':
+        minimum_inventory += 12.232
+    elif product[3] == 'Peanut Butter':
+        minimum_inventory += 5.871
+    elif product[3] == 'Jelly/Jam':
+        minimum_inventory += 39.632
+
     product_obj = {
         'manufacturer': product[0],
         'name': product[1],
         'size': product[2],
         'type': product[3],
         'sku': product[4],
-        'price': float(product[5][1:]) # [1:0] to remove the dollar sign
+        'price': float(product[5][1:]), # [1:0] to remove the dollar sign
+        'minimum_inventory': minimum_inventory,
+        'current_inventory': 0,
+        'cases_ordered': 0
     }
 
     # Add product to list
@@ -67,20 +98,26 @@ def get_random_product(product_type = None):
         return random.choice(products[product_type])
 
 # Write a purchased product to output file
-def write_record(date, customer, product):
+def purchase_item(date, customer, product):
     global total_sales
 
-    sale_price = round(product['price'] * PRICE_MULTIPLIER, 2)
-
-    total_sales += sale_price
-
-    if product['sku'] in items_purchased_by_sku:
-        items_purchased_by_sku[product['sku']] += 1
+    if product['current_inventory'] == 0:
+        return False
     else:
-        items_purchased_by_sku[product['sku']] = 1
+        product['current_inventory'] -= 1
 
-    output_string = date.strftime('%x') + ',' + str(customer) + ',' + product['sku'] + ',' + str(sale_price) + '\n'
-    output_file.write(output_string)
+        sale_price = round(product['price'] * PRICE_MULTIPLIER, 2)
+
+        total_sales += sale_price
+
+        if product['sku'] in items_purchased_by_sku:
+            items_purchased_by_sku[product['sku']] += 1
+        else:
+            items_purchased_by_sku[product['sku']] = 1
+
+        output_string = date.strftime('%x') + ',' + str(customer) + ',' + product['sku'] + ',' + str(sale_price) + ',' + str(product['current_inventory']) + ',' + str(product['cases_ordered']) + '\n'
+        output_file.write(output_string)
+        return True
 
 def get_item_by_sku(sku):
     for product in products_list:
@@ -88,10 +125,20 @@ def get_item_by_sku(sku):
             return product
     return None
 
+def checkInventory(current_date):
+    for product in products_list:
+        if ((product['type'] == 'Milk' or (current_date.weekday() == 1 or current_date.weekday() == 3 or current_date.weekday() == 5)) and product['current_inventory'] < product['minimum_inventory']) or current_date == START_DATE:
+            cases_needed = math.ceil((product['minimum_inventory'] - product['current_inventory']) / 12)
+            product['current_inventory'] += cases_needed * 12
+            product['cases_ordered'] += cases_needed
+
 # For every day of the year
-for day in range(365):
+for day in range(14):
     # Current date is start date plus number of days
     current_date = START_DATE + datetime.timedelta(days = day)
+
+    # Check inventory for the current day
+    checkInventory(current_date)
 
     # Get random customer count for the day
     customer_count = random.randint(DAILY_CUSTOMERS_LOW, DAILY_CUSTOMERS_HIGH)
@@ -112,54 +159,55 @@ for day in range(365):
 
         # 70% chance of buying milk
         if items_purchased < items_to_purchase and random.randint(1, 100) <= 70:
-            write_record(current_date, customer, get_random_product('Milk'))
-            items_purchased += 1
+            if purchase_item(current_date, customer, get_random_product('Milk')):
+                items_purchased += 1
 
             # 50% chance of buying cereal
             if items_purchased < items_to_purchase and random.randint(1, 100) <= 50:
-                write_record(current_date, customer, get_random_product('Cereal'))
-                items_purchased += 1
+                if purchase_item(current_date, customer, get_random_product('Cereal')):
+                    items_purchased += 1
         elif items_purchased < items_to_purchase and random.randint(1, 100) <= 5:
             # 5% chance of buying cereal
-            write_record(current_date, customer, get_random_product('Cereal'))
-            items_purchased += 1
+            if purchase_item(current_date, customer, get_random_product('Cereal')):
+                items_purchased += 1
         
         # 20% chance of buying baby food
         if items_purchased < items_to_purchase and random.randint(1, 100) <= 20:
-            write_record(current_date, customer, get_random_product('Baby Food'))
-            items_purchased += 1
+            if purchase_item(current_date, customer, get_random_product('Baby Food')):
+                items_purchased += 1
 
             # 80% chance of buying diapers
             if items_purchased < items_to_purchase and random.randint(1, 100) <= 80:
-                write_record(current_date, customer, get_random_product('Diapers'))
-                items_purchased += 1
+                if purchase_item(current_date, customer, get_random_product('Diapers')):
+                    items_purchased += 1
         elif items_purchased < items_to_purchase and random.randint(1, 100) == 1:
             # 1% chance of buying diapers
-            write_record(current_date, customer, get_random_product('Diapers'))
-            items_purchased += 1
+            if purchase_item(current_date, customer, get_random_product('Diapers')):
+                items_purchased += 1
         
         # 50% chance of buying bread
         if items_purchased < items_to_purchase and random.randint(1, 100) <= 50:
-            write_record(current_date, customer, get_random_product('Bread'))
-            items_purchased += 1
+            if purchase_item(current_date, customer, get_random_product('Bread')):
+                items_purchased += 1
         
         # 10% chance of buying peanut butter
         if items_purchased < items_to_purchase and random.randint(1, 100) <= 10:
-            write_record(current_date, customer, get_random_product('Peanut Butter'))
-            items_purchased += 1
+            if purchase_item(current_date, customer, get_random_product('Peanut Butter')):
+                items_purchased += 1
 
             # 90% change of buying jam or jelly
             if items_purchased < items_to_purchase and random.randint(1, 100) <= 90:
-                write_record(current_date, customer, get_random_product('Jelly/Jam'))
-                items_purchased += 1
+                if purchase_item(current_date, customer, get_random_product('Jelly/Jam')):
+                    items_purchased += 1
             # 5% change of buying jam or jelly
         elif items_purchased < items_to_purchase and random.randint(1, 100) <= 5:
-            write_record(current_date, customer, get_random_product('Jelly/Jam'))
-            items_purchased += 1
+            if purchase_item(current_date, customer, get_random_product('Jelly/Jam')):
+                items_purchased += 1
 
         # Random items for the rest
         for i in range(items_purchased + 1, items_to_purchase):
-            write_record(current_date, customer, get_random_product())
+            while not purchase_item(current_date, customer, get_random_product()):
+                continue
 
 sorted_purchases = dict(sorted(items_purchased_by_sku.items(), key=operator.itemgetter(1), reverse=True))
 
