@@ -1,14 +1,14 @@
-Total customers: 428791
-Total sales: $80185121.43
-Total items bought: 21634139
+Total customers: 428768
+Total sales: $80009491.39
+Total items bought: 21627951
 ==== Top 10 Selling Items ====
-1. 1.00% Milk (SKU #42356001) purchased 60187 times
-2. Whole Milk Milk (SKU #42359001) purchased 59882 times
-3. Whole Milk Milk (SKU #42360001) purchased 59789 times
-4. 2.00% Milk (SKU #42357001) purchased 59672 times
-5. 2.00% Milk (SKU #42358001) purchased 59671 times
-6. 1.00% Milk (SKU #42355001) purchased 59632 times
-7. Jam Grape (SKU #42311001) purchased 24478 times
-8. Squeeze Jelly Grape (SKU #42314001) purchased 24115 times
-9. Jam Strawberry (SKU #42312001) purchased 24084 times
-10. Jelly Grape (SKU #42313001) purchased 24061 times
+1. Whole Milk Milk (SKU #42360001) purchased 60276 times
+2. 1.00% Milk (SKU #42355001) purchased 59866 times
+3. Whole Milk Milk (SKU #42359001) purchased 59834 times
+4. 2.00% Milk (SKU #42357001) purchased 59832 times
+5. 2.00% Milk (SKU #42358001) purchased 59705 times
+6. 1.00% Milk (SKU #42356001) purchased 59664 times
+7. Squeeze Jelly Grape (SKU #42314001) purchased 20112 times
+8. Jam Grape (SKU #42311001) purchased 19985 times
+9. Jelly Grape (SKU #42313001) purchased 19860 times
+10. Jam Strawberry (SKU #42312001) purchased 19704 times
