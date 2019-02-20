@@ -133,7 +133,7 @@ def checkInventory(current_date):
             product['cases_ordered'] += cases_needed
 
 # For every day of the year
-for day in range(14):
+for day in range(365):
     # Current date is start date plus number of days
     current_date = START_DATE + datetime.timedelta(days = day)
 
